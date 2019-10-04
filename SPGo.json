@@ -1,0 +1,6 @@
+{
+    "sourceDirectory": "src",
+    "sharePointSiteUrl": "https://keyruspbi.sharepoint.com/sites/VivoClassic",
+    "publishingScope": "Major",
+    "authenticationType": "Digest"
+}
