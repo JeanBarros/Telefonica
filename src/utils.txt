@@ -1,0 +1,3 @@
+/sites/VivoClassic/SiteAssets
+/sites/VivoClassic/_catalogs/masterpage
+/sites/VivoClassic/Style%20Library
