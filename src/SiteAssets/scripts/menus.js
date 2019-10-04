@@ -107,7 +107,7 @@ function onSuccess1(sender, args) {
         var Id_GrupoAutorizado = listItem.get_item('permissaoDeAcesso');        
         var tipoLink = listItem.get_item('tipoLink');
         var urlIcon = listItem.get_item('icone');
-        var header = listItem.get_item('header');
+        var header = listItem.get_item('header'); 
         
         var link_ref = nomeRelatorio.replace(/\s/g, "");
         
