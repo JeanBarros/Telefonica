@@ -1,10 +1,10 @@
 ﻿ExecuteOrDelayUntilScriptLoaded(function () { getCurrentWebTitle() }, "SP.js");
 ExecuteOrDelayUntilScriptLoaded(function () { GetHeaders() }, "SP.js");
-ExecuteOrDelayUntilScriptLoaded(function () { GetMenuLinks() }, "SP.js");
 
-//ExecuteOrDelayUntilScriptLoaded(function () { getCurrentWebTitle(), GetMenuLinks(), GetHeaders()  }, "SP.js");
 
 var currentWebTitle = '';
+
+var links = [];
 
 function GetHeaders() {
 
@@ -61,7 +61,7 @@ function onSuccess(sender, args) {
                 else
 	        		alert('Um cabeçalho foi definido sem um ícone')
        		}
-		}
+	}
     
     $('.sidebarCollapse').on('click', function () {
     	$('#sidebar').toggleClass('active');
@@ -69,8 +69,9 @@ function onSuccess(sender, args) {
 	
 	// Cria uma área específica para adicionar os links fixos - Sempre abaixo dos cabeçalhos (links contendo sublinks)
 	$("#sidebar").append(`<div id="fixedLinks"></div>`);
-}
 
+	ExecuteOrDelayUntilScriptLoaded(function () { GetMenuLinks() }, "SP.js");
+}
 
 function GetMenuLinks() {
 
@@ -129,15 +130,51 @@ function onSuccess1(sender, args) {
 	        if (tipoLink == "Link"){
 	        	
 	        	if(urlIcon != null && linkReport != null){
-					$("#fixedLinks").append(`<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${linkReport.$1_1}')">
+					$("#fixedLinks").append(`<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${linkReport.$1_1}')" 
+					onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">
 					<div class="leftNavIcons" style="background:url(${urlIcon.$1_1}) no-repeat center center"></div>
 					</a>`);
+					
+					links.push(`${idRelatorio}`)
                 } 
                 else
 	        		alert('Um link foi definido sem um ícone ou uma URL.')
-	        }
+			}
+			
+			$(`#${idRelatorio}`).mouseover()
        }
 	}
+
+	// resetLinks()
+
+	// function resetLinks(){
+
+	// 	links.forEach(myFunction)
+
+	// 	function myFunction(item, index) {
+	// 		ExecuteOrDelayUntilScriptLoaded(function () { IsCurrentUserMemberOfGroup(Id_GrupoAutorizado, function (isCurrentUserInGroup) {
+	// 				if(isCurrentUserInGroup)
+	// 				{
+	// 					alert('O usuário está no grupo')
+	// 				}
+	// 				else{
+	// 					alert(item)
+	// 					$(`#${item}`).remove()
+	// 				}
+	// 			});
+	// 		}, "SP.js");
+	// 	}
+	// }	
+}
+
+function resetLinks(Id_GrupoAutorizado, linkID){
+	ExecuteOrDelayUntilScriptLoaded(function () { IsCurrentUserMemberOfGroup(Id_GrupoAutorizado, function (isCurrentUserInGroup) {
+			if(isCurrentUserInGroup)
+				alert('O usuário está no grupo')
+			else
+				$(`#${linkID}`).remove()
+		});
+	}, "SP.js");
 }
 
 function onFailed(sender, args) {
@@ -161,5 +198,42 @@ function getCurrentWebTitle(){
 }
 
 function setUrlIframe(linkReport){
-	$('#homeReportDesktop').attr('src', linkReport)
+	$('#homeReportDesktop').attr('src', linkReport);	
+}
+
+function IsCurrentUserMemberOfGroup(groupId, OnComplete) {
+
+        var currentContext = new SP.ClientContext.get_current();
+        var currentWeb = currentContext.get_web();
+
+        var currentUser = currentContext.get_web().get_currentUser();
+        currentContext.load(currentUser);
+
+        var allGroups = currentWeb.get_siteGroups();
+        currentContext.load(allGroups);
+
+        var group = allGroups.getById(groupId);
+        currentContext.load(group);
+
+        var groupUsers = group.get_users();
+        currentContext.load(groupUsers);
+
+        currentContext.executeQueryAsync(OnSuccess,OnFailure);
+
+        function OnSuccess(sender, args) {
+            var userInGroup = false;
+            var groupUserEnumerator = groupUsers.getEnumerator();
+            while (groupUserEnumerator.moveNext()) {
+                var groupUser = groupUserEnumerator.get_current();
+                if (groupUser.get_id() == currentUser.get_id()) {
+                    userInGroup = true;
+                    break;
+                }
+            }  
+            OnComplete(userInGroup);            
+        }
+
+        function OnFailure(sender, args) {
+            OnComplete(false);
+        }    
 }
