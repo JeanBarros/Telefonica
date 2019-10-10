@@ -31,12 +31,12 @@ function onSuccess(sender, args) {
         // get the current list item.
         var listItem = enumerator.get_current();
         
-        // get the field value by internalName.        
+		// get the field value by internalName.   
+		var idRelatorio = listItem.get_item('ID');
+        var nomeRelatorio = listItem.get_item('Title');     
         var site = listItem.get_item('site');
-        var Id_GrupoAutorizado = listItem.get_item('permissaoDeAcesso');
-        var nomeRelatorio = listItem.get_item('Title')
+		var Id_GrupoAutorizado = listItem.get_item('permissaoDeAcesso');		
         var urlIcon = listItem.get_item('icone');
-        var header = listItem.get_item('header');
         
         var link_ref = nomeRelatorio.replace(/\s/g, "");        
         
@@ -44,12 +44,14 @@ function onSuccess(sender, args) {
         if (site == currentWebTitle){
         	
         	if(urlIcon != null){
-    				$("#sidebar").append(`<div class="leftNavIcons sidebarCollapse" style="background:url(${urlIcon.$1_1}) no-repeat center center"></div>
+					$("#sidebar").append(`<div id="${idRelatorio}" class="leftNavIcons sidebarCollapse" 
+					style="background:url(${urlIcon.$1_1}) no-repeat center center"
+					onmouseover="resetHeaders(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})"></div>
     							
 					<ul class="list-unstyled components">
-	                    <li class="sidebar-links">
+	                    <li class="sidebar-links" >
 	                    	<!-- Cria dinamicamente o link para expandir os subitens do menu -->
-	                        <a href="#sublink_${link_ref}" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+							<a href="#sublink_${link_ref}" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
 	                        	${nomeRelatorio}                                            
 	                        </a>
 	                        <!-- Cria dinamicamente o ID para fazer referência ao item pai e então expandir os subitens do menu -->
@@ -60,7 +62,9 @@ function onSuccess(sender, args) {
                 } 
                 else
 	        		alert('Um cabeçalho foi definido sem um ícone')
-       		}
+			   }
+			   
+			   $(`#${idRelatorio}`).mouseover()
 	}
     
     $('.sidebarCollapse').on('click', function () {
@@ -108,10 +112,7 @@ function onSuccess1(sender, args) {
         var Id_GrupoAutorizado = listItem.get_item('permissaoDeAcesso');        
         var tipoLink = listItem.get_item('tipoLink');
         var urlIcon = listItem.get_item('icone');
-        var header = listItem.get_item('header'); 
-        
-        var link_ref = nomeRelatorio.replace(/\s/g, "");
-        
+        var header = listItem.get_item('header');         
         
         // Compara o valor cadastrado na coluna "Site" com o site onde o usuário está logado para mostrar os itens no menu correspondente a cada site
         if (site == currentWebTitle){
@@ -123,7 +124,8 @@ function onSuccess1(sender, args) {
 	        		alert('Um Sublink foi definido sem um cabeçalho ou uma URL.')
 	        	
 				$(`#sublink_${sublink_header}`).append(`<li>
-					<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${linkReport.$1_1}')">${nomeRelatorio}</a>
+					<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${linkReport.$1_1}')"
+					onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">${nomeRelatorio}</a>
 				</li>`)	
 	        }
 	        
@@ -167,11 +169,22 @@ function onSuccess1(sender, args) {
 	// }	
 }
 
+// Remove os cabeçalhos do menu lateral
+function resetHeaders(Id_GrupoAutorizado, linkID){
+	ExecuteOrDelayUntilScriptLoaded(function () { IsCurrentUserMemberOfGroup(Id_GrupoAutorizado, function (isCurrentUserInGroup) {
+			if(!isCurrentUserInGroup){
+				$(`#${linkID}`).next().remove()
+				$(`#${linkID}`).remove()
+			}
+				
+		});
+	}, "SP.js");
+}
+
+// Remove os links e sublinks dos cabeçalhos 
 function resetLinks(Id_GrupoAutorizado, linkID){
 	ExecuteOrDelayUntilScriptLoaded(function () { IsCurrentUserMemberOfGroup(Id_GrupoAutorizado, function (isCurrentUserInGroup) {
-			if(isCurrentUserInGroup)
-				alert('O usuário está no grupo')
-			else
+			if(!isCurrentUserInGroup)
 				$(`#${linkID}`).remove()
 		});
 	}, "SP.js");
