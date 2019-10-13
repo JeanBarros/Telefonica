@@ -3,7 +3,7 @@
     SP.SOD.executeFunc('sp.js', 'SP.ClientContext', loadSharepointList);
 }); 
 
-var currentWebTitle = '';
+var webTitle = '';
 
 function loadSharepointList() {
 
@@ -16,28 +16,39 @@ function (camlItems) {
 	        var listItem = listItemEnumerator.get_current();
 	        
 	        // get the field value by internalName.
-	        var linkReport = listItem.get_item('linkRelatorio');            
-	        var categoria = listItem.get_item('categoria');
-	        var apresentacao = listItem.get_item('apresentacao');
+	        var desktopLinkReport = listItem.get_item('desktopLinkReport');
+			var mobileLinkReport = listItem.get_item('mobileLinkReport');            
+	        var categoria = listItem.get_item('categoria');	        
 	        var site = listItem.get_item('site');
-	        var Id_GrupoAutorizado = listItem.get_item('permissaoDeAcesso');
 	        
-	        console.log('1 - obtém cada item da lista');
-	        console.log(linkReport);
-	        console.log(categoria);
-	        console.log(apresentacao);
-	        console.log(site);
-	        console.log(Id_GrupoAutorizado); 
-	        
-	        if (site == currentWebTitle){
-	            if (categoria == "Capa" && apresentacao == "Desktop")            	
-	                    $('#homeReportDesktop').attr('src', `${linkReport.$1_1}`)
-	            else if (categoria == "Capa" && apresentacao == "Mobile")	
-	                $('#homeReportMobile').attr('src', `${linkReport.$1_1}`)
-	            
-	            // Para as páginas de detalhes não terá versão mobile dos Dashboards
-	            if (categoria == "Detalhe")             	
-	                $('#reportDetails').attr('src', `${linkReport.$1_1}`)
+			// Compara o valor cadastrado na coluna "Site" com o site onde o usuário está logado 
+			// para mostrar os itens no menu correspondente a cada site
+			if (site == webTitle){
+				if(categoria == "Home"){
+					// Verifica se o usuário está navegando em desktop ou mobile 
+					if (screen.width > 991){
+						if(desktopLinkReport != null)					
+							$('#homeReportDesktop').attr('src', `${desktopLinkReport}`)
+						else
+							alert('Um relatório foi cadastrado sem uma URL.')
+					}
+					else{	
+						if(mobileLinkReport != null)					
+							$('#homeReportMobile').attr('src', `${mobileLinkReport}`)
+						else
+							alert('Um relatório foi cadastrado sem uma URL.')
+					}					
+				}
+				else if(categoria == "Detalhe"){
+					if (screen.width > 991){
+						if(desktopLinkReport != null)						
+							$('#reportDetails').attr('src', `${desktopLinkReport}`)
+					}
+					else{	
+						if(mobileLinkReport != null)					
+							$('#reportDetails').attr('src', `${mobileLinkReport}`)
+					}
+				}
 		    }
 	    }    
 	},
@@ -68,12 +79,12 @@ function getItemsWithCaml(listTitle) {
     	Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
     	);
     	
-    	getCurrentWebTitle();    	
+    	getWebTitle();    	
 
     return deferred.promise();
 };
 
-function getCurrentWebTitle(){
+function getWebTitle(){
     
     var clientContext = new SP.ClientContext.get_current();
     
@@ -82,48 +93,10 @@ function getCurrentWebTitle(){
 	clientContext.executeQueryAsync(success, failure);
 
 	function success() {
-		currentWebTitle = web.get_title();
+		webTitle = web.get_title();
 		console.log(web.get_title());
 	}
 	function failure() {
 		alert("Não foi possível obter o nome do site!");
 	}
 }
-
-/*function CurrentUserMemberOfGroup(groupId, context, result) {
-    var currentUser = context.get_web().get_currentUser();
-    context.load(currentUser);
-
-    var Groups = currentUser.get_groups();
-    context.load(Groups);
-
-    var group = Groups.getById(groupId);
-    context.load(group);
-
-    var groupUsers = group.get_users();
-    context.load(groupUsers);
-
-    context.executeQueryAsync(
-        function (sender, args) {
-            var userInGroup = UserInGroup(currentUser, group);
-            result(userInGroup);            
-        },
-        function OnFailure(sender, args) {
-            result(false);
-        }
-    );
-
-    function UserInGroup(user, group) {
-        var groupUsers = group.get_users();
-        var userInGroup = false;
-        var groupUserEnumerator = groupUsers.getEnumerator();
-        while (groupUserEnumerator.moveNext()) {
-            var groupUser = groupUserEnumerator.get_current();
-            if (groupUser.get_id() == user.get_id()) {
-                userInGroup = true;
-                break;
-            }
-        }
-        return userInGroup;
-    }
-}*/

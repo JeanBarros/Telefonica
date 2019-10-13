@@ -89,7 +89,7 @@ Para criar a página mestra diretamente a partir desse arquivo HTML, basta edita
     <mso:ContentType msdt:dt="string">Página Mestra HTML</mso:ContentType>
     
     <mso:HtmlDesignAssociated msdt:dt="string">1</mso:HtmlDesignAssociated>
-    <mso:HtmlDesignFromMaster msdt:dt="string"></mso:HtmlDesignFromMaster>
+    <mso:HtmlDesignFromMaster msdt:dt="string">https://keyruspbi.sharepoint.com/sites/VivoClassic/_catalogs/masterpage/reconecta-v2.html, https://keyruspbi.sharepoint.com/sites/VivoClassic/_catalogs/masterpage/reconecta-v2.html</mso:HtmlDesignFromMaster>
     <mso:HtmlDesignConversionSucceeded msdt:dt="string">True</mso:HtmlDesignConversionSucceeded>
     <mso:HtmlDesignStatusAndPreview msdt:dt="string">https://keyruspbi.sharepoint.com/sites/VivoClassic/_catalogs/masterpage/reconecta-v2.html, Conversão bem-sucedida.</mso:HtmlDesignStatusAndPreview>
     <mso:ContentTypeId msdt:dt="string">0x0101000F1C8B9E0EB4BE489F09807B2C53288F0054AD6EF48B9F7B45A142F8173F171BD10003D357F861E29844953D5CAA1D4D8A3A00906B79E232A70C4FB63898DADCCF2C14</mso:ContentTypeId>
@@ -394,10 +394,13 @@ Para criar a página mestra diretamente a partir desse arquivo HTML, basta edita
                 
         //]]>
         </script>
-        <script src="https://keyruspbi.sharepoint.com/sites/VivoClassic/SiteAssets/scripts/reports.js">//<![CDATA[//]]>
+        <script src="/sites/VivoClassic/SiteAssets/scripts/reports.js">//<![CDATA[//]]>
         </script>
-        <script src="https://keyruspbi.sharepoint.com/sites/VivoClassic/SiteAssets/scripts/menus.js">//<![CDATA[//]]>
+        <script src="/sites/VivoClassic/SiteAssets/scripts/menus.js">//<![CDATA[//]]>
         </script>
+        <script src="/sites/VivoClassic/SiteAssets/scripts/slides.js">//<![CDATA[//]]>
+        </script>
+
         <script type="text/javascript">//<![CDATA[
             $(document).ready(function () {
                     
@@ -405,7 +408,9 @@ Para criar a página mestra diretamente a partir desse arquivo HTML, basta edita
                     ExecuteOrDelayUntilScriptLoaded(function(){  
                         var InEditMode = SP.Ribbon.PageState.Handlers.isInEditMode();  
                         if(InEditMode){
-                            $('#s4-ribbonrow').css('display','block'); 
+                            $('#s4-ribbonrow').css('display','block') 
+                            $('.leftNav').css('display','none')
+                            $('.footer').css('display','none')
                         }  
                     }, 'SP.Ribbon.js');
                     /* Verifica quando uma página está em modo de edição - Final*/

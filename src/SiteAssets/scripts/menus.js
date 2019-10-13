@@ -15,7 +15,15 @@ function GetHeaders() {
 	clientContext.load(list);
 	
 	var camlQuery = new SP.CamlQuery();
-	camlQuery.set_viewXml("<View><Query><Where><Eq><FieldRef Name='tipoLink' /><Value Type='Choice'>Header</Value></Eq></Where></Query></View>");
+	camlQuery.set_viewXml(`<View>
+			<Query>
+				<Where>
+					<Eq>
+						<FieldRef Name='tipoLink' /><Value Type='Choice'>Header</Value>
+					</Eq>
+				</Where>
+			</Query>
+		</View>`);
 	
 	headerCollection = list.getItems(camlQuery);
 	clientContext.load(headerCollection);
@@ -41,13 +49,12 @@ function onSuccess(sender, args) {
         var link_ref = nomeRelatorio.replace(/\s/g, "");        
         
         // Compara o valor cadastrado na coluna "Site" com o site onde o usuário está logado para mostrar os itens no menu correspondente a cada site
-        if (site == currentWebTitle){
-        	
+        if (site == currentWebTitle){        	
         	if(urlIcon != null){
-					$("#sidebar").append(`<div id="${idRelatorio}" class="leftNavIcons sidebarCollapse" 
-					style="background:url(${urlIcon.$1_1}) no-repeat center center"
-					onmouseover="resetHeaders(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})"></div>
-    							
+				$("#sidebar").append(`<div id="${idRelatorio}" class="leftNavIcons sidebarCollapse" 
+						style="background:url(${urlIcon.$1_1}) no-repeat center center"
+						onmouseover="resetHeaders(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">
+					</div>    							
 					<ul class="list-unstyled components">
 	                    <li class="sidebar-links" >
 	                    	<!-- Cria dinamicamente o link para expandir os subitens do menu -->
@@ -60,11 +67,11 @@ function onSuccess(sender, args) {
 	                    </li>
 	                </ul>`);  
                 } 
-                else
-	        		alert('Um cabeçalho foi definido sem um ícone')
-			   }
+            else
+	        	alert('Um cabeçalho foi cadastrado sem um ícone')
+			}
 			   
-			   $(`#${idRelatorio}`).mouseover()
+		$(`#${idRelatorio}`).mouseover()
 	}
     
     $('.sidebarCollapse').on('click', function () {
@@ -105,83 +112,90 @@ function onSuccess1(sender, args) {
 		// get the field value by internalName.
 		var idRelatorio = listItem.get_item('ID');
 		var nomeRelatorio = listItem.get_item('Title');		
-        var linkReport = listItem.get_item('linkRelatorio');            
+		var desktopLinkReport = listItem.get_item('desktopLinkReport');
+		var mobileLinkReport = listItem.get_item('mobileLinkReport');            
         var categoria = listItem.get_item('categoria');
-        var apresentacao = listItem.get_item('apresentacao');
         var site = listItem.get_item('site');
         var Id_GrupoAutorizado = listItem.get_item('permissaoDeAcesso');        
         var tipoLink = listItem.get_item('tipoLink');
         var urlIcon = listItem.get_item('icone');
         var header = listItem.get_item('header');         
         
-        // Compara o valor cadastrado na coluna "Site" com o site onde o usuário está logado para mostrar os itens no menu correspondente a cada site
+		// Compara o valor cadastrado na coluna "Site" com o site onde o usuário está logado 
+		// para mostrar os itens no menu correspondente a cada site
         if (site == currentWebTitle){
         	
-        	if (tipoLink == "Sublink"){	        
-				if(header != null && linkReport != null)	        	
-	        		var sublink_header = header.replace(/\s/g, "");
-	        	else
-	        		alert('Um Sublink foi definido sem um cabeçalho ou uma URL.')
-	        	
-				$(`#sublink_${sublink_header}`).append(`<li>
-					<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${linkReport.$1_1}')"
-					onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">${nomeRelatorio}</a>
-				</li>`)	
+        	if (tipoLink == "Sublink"){	
+				// Verifica se o usuário está navegando em desktop ou mobile 
+				if (screen.width > 991){
+					if(header != null && desktopLinkReport != null){
+						var sublink_header = header.replace(/\s/g, "");
+						
+						$(`#sublink_${sublink_header}`).append(`<li>
+							<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${desktopLinkReport}')"
+							onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">${nomeRelatorio}</a>
+						</li>`)
+					}	
+					else
+						alert('Um Sublink foi cadastrado sem um cabeçalho ou uma URL.')
+				}
+				else{
+					if(header != null && mobileLinkReport != null){	        	
+						var sublink_header = header.replace(/\s/g, "");
+
+						$(`#sublink_${sublink_header}`).append(`<li>
+							<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${mobileLinkReport}')"
+							onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">${nomeRelatorio}</a>
+						</li>`)
+					}
+					else
+						alert('Um Sublink foi cadastrado sem um cabeçalho ou uma URL.')
+				}					
 	        }
 	        
 	        if (tipoLink == "Link"){
-	        	
-	        	if(urlIcon != null && linkReport != null){
-					$("#fixedLinks").append(`<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${linkReport.$1_1}')" 
-					onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">
-					<div class="leftNavIcons" style="background:url(${urlIcon.$1_1}) no-repeat center center"></div>
-					</a>`);
+				// Verifica se o usuário está navegando em desktop ou mobile
+				if (screen.width > 991){
+					if(urlIcon != null && desktopLinkReport != null){
+						$("#fixedLinks").append(`<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${desktopLinkReport}')" 
+								onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">
+								<div class="leftNavIcons" style="background:url(${urlIcon.$1_1}) no-repeat center center">
+							</div>
+						</a>`);
+					}
+					else
+	        			alert('Um link foi cadastrado sem um ícone ou uma URL.')
+				}
+				else{
+					if(urlIcon != null && mobileLinkReport != null){
+						$("#fixedLinks").append(`<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${mobileLinkReport}')" 
+								onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">
+								<div class="leftNavIcons" style="background:url(${urlIcon.$1_1}) no-repeat center center">
+							</div>
+						</a>`);
+					}
+				}
 					
-					links.push(`${idRelatorio}`)
-                } 
-                else
-	        		alert('Um link foi definido sem um ícone ou uma URL.')
+				links.push(`${idRelatorio}`)
 			}
 			
 			$(`#${idRelatorio}`).mouseover()
        }
-	}
-
-	// resetLinks()
-
-	// function resetLinks(){
-
-	// 	links.forEach(myFunction)
-
-	// 	function myFunction(item, index) {
-	// 		ExecuteOrDelayUntilScriptLoaded(function () { IsCurrentUserMemberOfGroup(Id_GrupoAutorizado, function (isCurrentUserInGroup) {
-	// 				if(isCurrentUserInGroup)
-	// 				{
-	// 					alert('O usuário está no grupo')
-	// 				}
-	// 				else{
-	// 					alert(item)
-	// 					$(`#${item}`).remove()
-	// 				}
-	// 			});
-	// 		}, "SP.js");
-	// 	}
-	// }	
+	}	
 }
 
-// Remove os cabeçalhos do menu lateral
+// Remove os cabeçalhos do menu lateral e todo os sublinks se o usuário não é membro dos grupos autorizado no header cadastrado na lista
 function resetHeaders(Id_GrupoAutorizado, linkID){
 	ExecuteOrDelayUntilScriptLoaded(function () { IsCurrentUserMemberOfGroup(Id_GrupoAutorizado, function (isCurrentUserInGroup) {
 			if(!isCurrentUserInGroup){
 				$(`#${linkID}`).next().remove()
 				$(`#${linkID}`).remove()
-			}
-				
+			}				
 		});
 	}, "SP.js");
 }
 
-// Remove os links e sublinks dos cabeçalhos 
+// Remove os links e sublinks dos cabeçalhos onde o usuário não é membro dos grupos autorizados, cadastrados na lista
 function resetLinks(Id_GrupoAutorizado, linkID){
 	ExecuteOrDelayUntilScriptLoaded(function () { IsCurrentUserMemberOfGroup(Id_GrupoAutorizado, function (isCurrentUserInGroup) {
 			if(!isCurrentUserInGroup)
@@ -231,9 +245,9 @@ function IsCurrentUserMemberOfGroup(groupId, OnComplete) {
         var groupUsers = group.get_users();
         currentContext.load(groupUsers);
 
-        currentContext.executeQueryAsync(OnSuccess,OnFailure);
+        currentContext.executeQueryAsync(OnSuccess2,OnFailure);
 
-        function OnSuccess(sender, args) {
+        function OnSuccess2(sender, args) {
             var userInGroup = false;
             var groupUserEnumerator = groupUsers.getEnumerator();
             while (groupUserEnumerator.moveNext()) {
