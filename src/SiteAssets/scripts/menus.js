@@ -119,7 +119,8 @@ function onSuccess1(sender, args) {
         var Id_GrupoAutorizado = listItem.get_item('permissaoDeAcesso');        
         var tipoLink = listItem.get_item('tipoLink');
         var urlIcon = listItem.get_item('icone');
-        var header = listItem.get_item('header');         
+		var header = listItem.get_item('header'); 
+		var paginaDetalhe = listItem.get_item('paginaDetalhes');        
         
 		// Compara o valor cadastrado na coluna "Site" com o site onde o usuário está logado 
 		// para mostrar os itens no menu correspondente a cada site
@@ -129,24 +130,46 @@ function onSuccess1(sender, args) {
 				// Verifica se o usuário está navegando em desktop ou mobile 
 				if (screen.width > 991){
 					if(header != null && desktopLinkReport != null){
-						var sublink_header = header.replace(/\s/g, "");
-						
-						$(`#sublink_${sublink_header}`).append(`<li>
-							<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${desktopLinkReport}')"
-							onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">${nomeRelatorio}</a>
-						</li>`)
+						var sublink_header = header.replace(/\s/g, "");	
+						if(categoria == "Detalhe"){
+							if(paginaDetalhe != null){
+								$(`#sublink_${sublink_header}`).append(`<li>
+									<a id="${idRelatorio}" href="${paginaDetalhe.$1_1}?${desktopLinkReport}" 
+									onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">${nomeRelatorio}</a>
+								</li>`)
+							}
+							else
+								alert('Um sublink foi cadastrado sem uma URL para a página de detalhes')
+						}	
+						else{				
+							$(`#sublink_${sublink_header}`).append(`<li>
+								<a id="${idRelatorio}" href="#" onclick="setUrlIframeHome('${desktopLinkReport}')"
+								onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">${nomeRelatorio}</a>
+							</li>`)
+						}
 					}	
 					else
-						alert('Um Sublink foi cadastrado sem um cabeçalho ou uma URL.')
+						alert('Um Sublink foi cadastrado sem um cabeçalho ou uma URL')
 				}
 				else{
 					if(header != null && mobileLinkReport != null){	        	
 						var sublink_header = header.replace(/\s/g, "");
-
-						$(`#sublink_${sublink_header}`).append(`<li>
-							<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${mobileLinkReport}')"
-							onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">${nomeRelatorio}</a>
-						</li>`)
+						if(categoria == "Detalhe"){
+							if(paginaDetalhe != null){
+								$(`#sublink_${sublink_header}`).append(`<li>
+									<a id="${idRelatorio}" href="${paginaDetalhe.$1_1}?${mobileLinkReport}"
+									onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">${nomeRelatorio}</a>
+								</li>`)
+							}
+							else
+								alert('Um sublink foi cadastrado sem uma URL para a página de detalhes')
+						}
+						else{
+							$(`#sublink_${sublink_header}`).append(`<li>
+								<a id="${idRelatorio}" href="#" onclick="setUrlIframeMobile('${mobileLinkReport}')"
+								onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">${nomeRelatorio}</a>
+							</li>`)
+						}
 					}
 					else
 						alert('Um Sublink foi cadastrado sem um cabeçalho ou uma URL.')
@@ -157,23 +180,50 @@ function onSuccess1(sender, args) {
 				// Verifica se o usuário está navegando em desktop ou mobile
 				if (screen.width > 991){
 					if(urlIcon != null && desktopLinkReport != null){
-						$("#fixedLinks").append(`<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${desktopLinkReport}')" 
-								onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">
-								<div class="leftNavIcons" style="background:url(${urlIcon.$1_1}) no-repeat center center">
-							</div>
-						</a>`);
+						if(categoria == "Detalhe"){
+							if(paginaDetalhe != null){
+								$("#fixedLinks").append(`<a id="${idRelatorio}" href="${paginaDetalhe.$1_1}?${desktopLinkReport}" 
+										onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">
+										<div class="leftNavIcons" style="background:url(${urlIcon.$1_1}) no-repeat center center">
+									</div>
+								</a>`);
+							}
+							else
+								alert('Um link foi cadastrado sem uma URL para a página de detalhes')
+						}
+						else{
+							$("#fixedLinks").append(`<a id="${idRelatorio}" href="#" onclick="setUrlIframeHome('${desktopLinkReport}')" 
+									onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">
+									<div class="leftNavIcons" style="background:url(${urlIcon.$1_1}) no-repeat center center">
+								</div>
+							</a>`);
+						}
 					}
 					else
 	        			alert('Um link foi cadastrado sem um ícone ou uma URL.')
 				}
 				else{
 					if(urlIcon != null && mobileLinkReport != null){
-						$("#fixedLinks").append(`<a id="${idRelatorio}" href="#" onclick="setUrlIframe('${mobileLinkReport}')" 
-								onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">
-								<div class="leftNavIcons" style="background:url(${urlIcon.$1_1}) no-repeat center center">
-							</div>
-						</a>`);
+						if(categoria == "Detalhe"){
+							if(paginaDetalhe != null){
+								$("#fixedLinks").append(`<a id="${idRelatorio}" href="${paginaDetalhe.$1_1}?${mobileLinkReport}" 
+										onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">
+										<div class="leftNavIcons" style="background:url(${urlIcon.$1_1}) no-repeat center center">
+									</div>
+								</a>`);
+							}
+							else
+								alert('Um link foi cadastrado sem uma URL para a página de detalhes')
+						}
+						else{
+							$("#fixedLinks").append(`<a id="${idRelatorio}" href="#" onclick="setUrlIframeMobile('${mobileLinkReport}')" 
+							onmouseover="resetLinks(${Id_GrupoAutorizado.$1w_1}, ${idRelatorio})">
+							<div class="leftNavIcons" style="background:url(${urlIcon.$1_1}) no-repeat center center"></div>
+							</a>`);							
+						}
 					}
+					else
+	        			alert('Um link foi cadastrado sem um ícone ou uma URL.')
 				}
 					
 				links.push(`${idRelatorio}`)
@@ -224,8 +274,12 @@ function getCurrentWebTitle(){
 	}
 }
 
-function setUrlIframe(linkReport){
+function setUrlIframeHome(linkReport){
 	$('#homeReportDesktop').attr('src', linkReport);	
+}
+
+function setUrlIframeMobile(linkReport){
+	$('#homeReportMobile').attr('src', linkReport);	
 }
 
 function IsCurrentUserMemberOfGroup(groupId, OnComplete) {

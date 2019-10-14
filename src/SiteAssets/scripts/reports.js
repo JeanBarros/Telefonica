@@ -39,16 +39,6 @@ function (camlItems) {
 							alert('Um relatório foi cadastrado sem uma URL.')
 					}					
 				}
-				else if(categoria == "Detalhe"){
-					if (screen.width > 991){
-						if(desktopLinkReport != null)						
-							$('#reportDetails').attr('src', `${desktopLinkReport}`)
-					}
-					else{	
-						if(mobileLinkReport != null)					
-							$('#reportDetails').attr('src', `${mobileLinkReport}`)
-					}
-				}
 		    }
 	    }    
 	},

@@ -414,6 +414,11 @@ Para criar a página mestra diretamente a partir desse arquivo HTML, basta edita
                         }  
                     }, 'SP.Ribbon.js');
                     /* Verifica quando uma página está em modo de edição - Final*/
+
+                    var queryString = location.search;
+                    var linkReport = queryString.substring(1)
+
+                    $('#reportDetails').attr('src', `${linkReport}`)
                 }); 
             
         //]]>
