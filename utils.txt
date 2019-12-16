@@ -1,0 +1,3 @@
+/sites/PortalB2CcertOCBNL/SiteAssets/scripts
+/sites/PortalB2CcertOCBNL/_catalogs/masterpage
+/sites/PortalB2CcertOCBNL/Style%20Library
