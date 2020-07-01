@@ -3,7 +3,8 @@
     SP.SOD.executeFunc('sp.js', 'SP.ClientContext', loadSharepointList);
 }); 
 
-var webTitle = '';
+var webTitle, urlSubString, urlPageIdentifier = '';
+var urlString = document.URL;
 
 function loadSharepointList() {
 
@@ -22,6 +23,8 @@ function (camlItems) {
 			var mobileLinkReport = listItem.get_item('mobileLinkReport');            
 	        var categoria = listItem.get_item('categoria');	        
 	        var site = listItem.get_item('site');
+			var isDefaultPage= listItem.get_item('defaultPage');
+			var urlPageToken = listItem.get_item('urlPageToken');
 	        var gruposAutorizados = listItem.get_item('permissaoDeAcesso');
 			var blackList = listItem.get_item('blackList');
 	        
@@ -30,22 +33,55 @@ function (camlItems) {
 			if (site == webTitle){
 				if(categoria == "Home"){
 					if(blackList != null){
+						
 						blackList.forEach(checkUser);
 						
 						// Verifica se o usuário atual está na coluna Black list da lista Reports
 						function checkUser(element) {
 							// Compara pelo ID do usuário			    	
-					    	if (element.$1x_1 == _spPageContextInfo.userId){
+					    	if (element.$1z_1 == _spPageContextInfo.userId){
 					    		// Verifica se o usuário está navegando em desktop ou mobile 
 								if (screen.width > 991){
-									// Substitui o relatório da página (Desktop) por uma mensagem para o usuário 
-									$('.areaContent-home-desktop').text('Sem permissão para visualizar este conteúdo. Contate o administrador.')
-						    		$('.areaContent-home-desktop').css({'padding-top': '15%', 'text-align': 'center'})
+									if(urlString.match('_') != null){
+									  	if(isDefaultPage == false){
+									  		urlSubString = document.URL.split('_');	  		
+											urlPageIdentifier = urlSubString[1].split('.');
+												
+											if(urlPageIdentifier[0] == urlPageToken){
+												// Substitui o relatório da página (Desktop) por uma mensagem para o usuário 
+												$('.areaContent-home-desktop').text('Sem permissão para visualizar este conteúdo. Contate o administrador.');
+									    		$('.areaContent-home-desktop').css({'padding-top': '15%', 'text-align': 'center'});	
+											}
+										}
+									}
+									else{
+										if(isDefaultPage == true){
+											// Substitui o relatório da página (Desktop) por uma mensagem para o usuário 
+											$('.areaContent-home-desktop').text('Sem permissão para visualizar este conteúdo. Contate o administrador.');
+								    		$('.areaContent-home-desktop').css({'padding-top': '15%', 'text-align': 'center'});
+										}
+									}
 						    	}
 					    		else{
-					    			// Substitui o relatório da página (Mobile) por uma mensagem para o usuário 
-									$('.areaContent-home-mobile').text('Sem permissão para visualizar este conteúdo. Contate o administrador.')
-					    			$('.areaContent-home-mobile').css({'padding-top': '50%', 'text-align': 'center'})
+					    			if(urlString.match('_') != null){
+									  	if(isDefaultPage == false){
+									  		urlSubString = document.URL.split('_');	  		
+											urlPageIdentifier = urlSubString[1].split('.');
+												
+											if(urlPageIdentifier[0] == urlPageToken){
+												// Substitui o relatório da página (Mobile) por uma mensagem para o usuário 
+												$('.areaContent-home-mobile').text('Sem permissão para visualizar este conteúdo. Contate o administrador.');
+								    			$('.areaContent-home-mobile').css({'padding-top': '50%', 'text-align': 'center'});	
+											}
+										}
+									}
+									else{
+										if(isDefaultPage == true){
+											// Substitui o relatório da página (Mobile) por uma mensagem para o usuário 
+											$('.areaContent-home-mobile').text('Sem permissão para visualizar este conteúdo. Contate o administrador.');
+							    			$('.areaContent-home-mobile').css({'padding-top': '50%', 'text-align': 'center'});
+										}
+									}
 					    		}
 					    	}	 
 						}
@@ -55,21 +91,92 @@ function (camlItems) {
 		
 						function setReports(element, index, array) {
 							// Verifica se o usuário está navegando em desktop ou mobile 
-							if (screen.width > 991)
-								resetHomeReport(element.$1x_1, idRelatorio, desktopLinkReport)
-							else
-								resetHomeReport(element.$1x_1, idRelatorio, mobileLinkReport)
+							if (screen.width > 991){
+								if(urlString.match('_') != null){
+								  	if(isDefaultPage == false){
+								  		urlSubString = document.URL.split('_');	  		
+										urlPageIdentifier = urlSubString[1].split('.');
+											
+										if(urlPageIdentifier[0] == urlPageToken){
+											resetHomeReport(element.$1z_1, idRelatorio, desktopLinkReport);	
+										}
+									}
+								}
+								else{
+									if(isDefaultPage == true)
+										resetHomeReport(element.$1z_1, idRelatorio, desktopLinkReport);
+								}								
+							}
+							else{
+								if(urlString.match('_') != null){
+								  	if(isDefaultPage == false){
+								  		urlSubString = document.URL.split('_');	  		
+										urlPageIdentifier = urlSubString[1].split('.');
+											
+										if(urlPageIdentifier[0] == urlPageToken){
+											resetHomeReport(element.$1z_1, idRelatorio, mobileLinkReport);
+										}
+									}
+								}
+								else{
+									if(isDefaultPage == true)
+										resetHomeReport(element.$1z_1, idRelatorio, mobileLinkReport);
+								}
+							}
 						}
 					}
 					else{					
 						// Verifica se o usuário está navegando em desktop ou mobile 
-						if (screen.width > 991)
-							showDesktopReport(desktopLinkReport)
-						else
-							showMobileReport(mobileLinkReport)
+						if (screen.width > 991){
+							if(urlString.match('_') != null){
+								if(isDefaultPage == false){
+							  		urlSubString = document.URL.split('_');	  		
+									urlPageIdentifier = urlSubString[1].split('.');
+										
+									if(urlPageIdentifier[0] == urlPageToken){
+										// Substitui o relatório da página (Desktop) por uma mensagem para o usuário 
+										$('.areaContent-home-desktop').text('Sem permissão para visualizar este conteúdo. Contate o administrador.');
+							    		$('.areaContent-home-desktop').css({'padding-top': '15%', 'text-align': 'center'});	
+									}
+								}
+							}
+							else{
+								if(isDefaultPage == true){
+									// Substitui o relatório da página (Desktop) por uma mensagem para o usuário 
+									$('.areaContent-home-desktop').text('Sem permissão para visualizar este conteúdo. Contate o administrador.');
+						    		$('.areaContent-home-desktop').css({'padding-top': '15%', 'text-align': 'center'});
+								}
+							}
+				    	}
+						else{							
+							if(urlString.match('_') != null){
+							  	if(isDefaultPage == false){
+							  		urlSubString = document.URL.split('_');	  		
+									urlPageIdentifier = urlSubString[1].split('.');
+										
+									if(urlPageIdentifier[0] == urlPageToken){
+										// Substitui o relatório da página (Mobile) por uma mensagem para o usuário 
+										$('.areaContent-home-mobile').text('Sem permissão para visualizar este conteúdo. Contate o administrador.');
+						    			$('.areaContent-home-mobile').css({'padding-top': '50%', 'text-align': 'center'});	
+									}
+								}
+							}
+							else{
+								if(isDefaultPage == true){
+									// Substitui o relatório da página (Mobile) por uma mensagem para o usuário 
+									$('.areaContent-home-mobile').text('Sem permissão para visualizar este conteúdo. Contate o administrador.');
+					    			$('.areaContent-home-mobile').css({'padding-top': '50%', 'text-align': 'center'});
+								}
+							}
+						}
 					}
+					
+					if ($("#homeReportDesktop").length || $("#homeReportMobile").length){
+						var currentPageTitle = $(document).attr('title');
 						
-					getClickedLinkProps(idRelatorio, nomeRelatorio)	
+					    //getClickedLinkProps(idRelatorio, nomeRelatorio, currentPageTitle);
+					    createListItem(nomeRelatorio, idRelatorio.toString(), currentPageTitle);
+					}
 				}
 		    }
 	    }    
@@ -96,26 +203,10 @@ function checkUserOnGroup(gruposAutorizados, linkID)
 {
     d = new $.Deferred();
     
-	IsUserMemberOfGroup(gruposAutorizados).done(function (result) {		
-		if(result){
+	IsUserMemberOfGroup(gruposAutorizados).done(function (result) {					
+		if(result){			
 			// Armazena no Array os itens do menu
 			reportsToShow.push(linkID);
-			console.log('No item ' + linkID + ' da lista Reports, o usuário está no grupo ' + gruposAutorizados)
-		}					
-		else{		    		
-    		// Verifica se o usuário está navegando em desktop ou mobile 
-			if (screen.width > 991){
-				// Substitui o relatório da página (Desktop) por uma mensagem para o usuário 
-				$('.areaContent-home-desktop').text('Sem permissão para visualizar este conteúdo. Contate o administrador.')
-	    		$('.areaContent-home-desktop').css({'padding-top': '15%', 'text-align': 'center'})
-	    	}
-    		else{
-    			// Substitui o relatório da página (Mobile) por uma mensagem para o usuário 
-				$('.areaContent-home-mobile').text('Sem permissão para visualizar este conteúdo. Contate o administrador.')
-    			$('.areaContent-home-mobile').css({'padding-top': '50%', 'text-align': 'center'})
-    		}
-			
-			console.log('No item ' + linkID + ' da lista Reports, o usuário não está no grupo ' + gruposAutorizados)
 		}
 	});
 
@@ -130,7 +221,7 @@ function showReports(linkReport)
     d = new $.Deferred();
     
     setTimeout(function(){ 
-    	if(reportsToShow != null){						
+    	if(reportsToShow.length > 0){						
 			reportsToShow.forEach(executeItem);
 			function executeItem(element, index, array) {					
 				// Verifica se o usuário está navegando em desktop ou mobile 
@@ -143,6 +234,19 @@ function showReports(linkReport)
 					$('.areaContent-home-mobile').css({'padding-top': '160%', 'text-align': 'center'})
 				}	
 			}
+		}
+		else{		    		
+    		// Verifica se o usuário está navegando em desktop ou mobile 
+			if (screen.width > 991){
+				// Substitui o relatório da página (Desktop) por uma mensagem para o usuário 
+				$('.areaContent-home-desktop').text('Sem permissão para visualizar este conteúdo. Contate o administrador.')
+	    		$('.areaContent-home-desktop').css({'padding-top': '15%', 'text-align': 'center'})
+	    	}
+    		else{
+    			// Substitui o relatório da página (Mobile) por uma mensagem para o usuário 
+				$('.areaContent-home-mobile').text('Sem permissão para visualizar este conteúdo. Contate o administrador.')
+    			$('.areaContent-home-mobile').css({'padding-top': '50%', 'text-align': 'center'})
+    		}
 		}
 		
     	d.resolve(); 
