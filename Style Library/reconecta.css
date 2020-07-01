@@ -34,6 +34,29 @@ deixando uma área branca em cima do menu*/
 	font-size:1em;
 }
 
+.modal-backdrop{
+	display:none;
+}
+
+#overlay {
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.73);
+  z-index: 5;
+}
+
+.modalImage{   
+    width: 80px;
+    height: 80px;
+    background-size: contain !important;
+}
+
 /* Área de conteúdo central do SharePoint */
 .areaContent-home-desktop, .areaContent-home-mobile, .areaContent-detalhes{
     position: relative;
@@ -204,7 +227,8 @@ ul.dynamic a{
 
 #closeMenu{
 	width:100%;
-	height:51px;
+	height:0;
+	visibility:hidden;
 	margin-bottom:25px;
 	cursor:pointer;
 	position:relative;
@@ -221,10 +245,11 @@ ul.dynamic a{
 
 .leftNavIcons{
 	width:80px;
-	height:105px;
+	height:80px;
 	position:relative;
 	z-index:1;
 	cursor: pointer !important;	
+	margin-bottom:-30px;
 }
 
 #fixedLinks .leftNavIcons{
@@ -238,10 +263,9 @@ ul.dynamic a{
 
 .link-title{
 	position:relative;
-	top:60px;
+	top:40px;
 	text-align:center;
 	font-size: 0.8em;
-	padding:2px;
 }
 
 .footer {
@@ -305,7 +329,7 @@ ul.dynamic a{
     max-width: 80px;
     height: 100%;
     background: #067486;
-    background-image: linear-gradient(#1bbdd8, #02252b);
+    /*background-image: linear-gradient(#1bbdd8, #02252b);*/
     color: #fff;
     transition: all 0.3s;
     position: fixed;
@@ -317,9 +341,9 @@ ul.dynamic a{
 }
 
 /* Mantém a funcionalidade de rolagem mas oculta a barra*/
-#sidebar::-webkit-scrollbar { display: none; }
+#sidebar::-webkit-scrollbar { display: none; } /* Chrome */
 #sidebar { scrollbar-width: none;}
-.element { -ms-overflow-style: none; }
+#sidebar { -ms-overflow-style: none; }/* I.E */
 
 #sidebar.active {
     min-width: 250px;
@@ -336,8 +360,12 @@ ul.dynamic a{
     display: block;
 }
 
-.sidebar-links {
+.sidebar-links{
     display: none;
+}
+
+.sidebar-links .list-unstyled{
+	display:none;
 }
 
 .sidebar-links .dropdown-toggle{
@@ -347,6 +375,7 @@ ul.dynamic a{
 
 ul.list-unstyled.components{
 	display:none;
+	margin-bottom:9px;
 }
 
 #sidebar.active .sidebar-links, .sidebar-links-title {
@@ -431,7 +460,7 @@ a[data-toggle="collapse"] {
 #sidebar .dropdown-toggle::after {
     display: block;
     position: absolute;
-    top: 50%;
+    top: 0;
     right: 63%;
     transform: translateY(-50%);
 }
@@ -446,8 +475,8 @@ a[data-toggle="collapse"] {
     font-size: 0.9em !important;
     padding-left: 86px !important;
     padding-top: 8px;
-    /* background: #6d7fcc; */
-    height: 38px;
+    /* background: #6d7fcc; 
+    height: 38px;*/
 }
 
 ul.CTAs {
